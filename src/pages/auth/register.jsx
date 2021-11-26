@@ -8,8 +8,10 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { REGISTRO } from "graphql/auth/mutations";
 import { useNavigate } from "react-router";
+import { useAuth } from "context/authContext";
 
 const Register = () => {
+  const { setToken } = useAuth();
   const navigate = useNavigate();
   const { form, formData, updateFormData } = useFormData();
 
@@ -20,19 +22,18 @@ const Register = () => {
 
   const submitForm = (e) => {
     e.preventDefault();
-    console.log("Enviar datos al back", formData);
+
     registro({ variables: formData });
   };
 
   useEffect(() => {
-    console.log("data mutation", mutationData);
     if (mutationData) {
       if (mutationData.registro.token) {
-        localStorage.setItem("token", mutationData.registro.token);
+        setToken(mutationData.registro.token);
         navigate("/");
       }
     }
-  }, [mutationData]);
+  }, [mutationData, setToken, navigate]);
 
   return (
     <div className="flex flex-col h-full w-full items-center justify-center">
