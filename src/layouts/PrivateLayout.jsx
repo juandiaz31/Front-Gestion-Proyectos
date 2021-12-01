@@ -7,6 +7,7 @@ import { useAuth } from "context/authContext";
 import { useMutation } from "@apollo/client";
 import { REFRESH_TOKEN } from "graphql/auth/mutations";
 import { useNavigate } from "react-router-dom";
+
 const PrivateLayout = () => {
   const navigate = useNavigate();
   const { authToken, setToken } = useAuth();

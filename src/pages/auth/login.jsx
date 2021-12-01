@@ -13,7 +13,10 @@ const Login = () => {
   const { setToken } = useAuth();
   const { form, formData, updateFormData } = useFormData();
 
-  const [login, { data: mutationData, loadin: mutationLoading, error: mutationError }] = useMutation(LOGIN);
+  const [
+    login,
+    { data: mutationData, loadin: mutationLoading, error: mutationError },
+  ] = useMutation(LOGIN);
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -25,7 +28,6 @@ const Login = () => {
 
   //Para saber si la mutacion login trae informacion y crear un token para dar acceso
   useEffect(() => {
-    console.log("data mutation", mutationData);
     if (mutationData) {
       if (mutationData.login.token) {
         setToken(mutationData.login.token);
