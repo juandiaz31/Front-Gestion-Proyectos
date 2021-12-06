@@ -69,35 +69,35 @@ const EditarUsuario = () => {
         className="flex flex-col items-center justify-center"
       >
         <Input
-          label="Nombre de la persona:"
+          label="Nombre:"
           type="text"
           name="nombre"
           defaultValue={queryData.Usuario.nombre}
           required={true}
         />
         <Input
-          label="Apellido de la persona:"
+          label="Apellido:"
           type="text"
           name="apellido"
           defaultValue={queryData.Usuario.apellido}
           required={true}
         />
         <Input
-          label="Correo de la persona:"
+          label="Correo:"
           type="email"
           name="correo"
           defaultValue={queryData.Usuario.correo}
           required={true}
         />
         <Input
-          label="Identificación de la persona:"
+          label="Identificación:"
           type="text"
           name="identificacion"
           defaultValue={queryData.Usuario.identificacion}
           required={true}
         />
         <DropDown
-          label="Estado de la persona:"
+          label="Estado:"
           name="estado"
           defaultValue={queryData.Usuario.estado}
           required={true}

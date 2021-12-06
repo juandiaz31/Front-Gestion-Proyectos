@@ -9,7 +9,6 @@ import {
   InMemoryCache,
 } from "@apollo/client";
 import Index from "pages/Index";
-import Page2 from "pages/Page2";
 import IndexCategory1 from "pages/category1/Index";
 import Category1 from "pages/category1/CategoryPage1";
 import IndexUsuarios from "pages/usuarios";
@@ -22,10 +21,12 @@ import Login from "pages/auth/login";
 import { AuthContext } from "context/authContext";
 import { setContext } from "@apollo/client/link/context";
 import jwt_decode from "jwt-decode";
+import IndexProyectos from "pages/proyectos/IndexProyectos";
+import CrearProyecto from "pages/proyectos/CrearProyecto";
 // import PrivateRoute from 'components/PrivateRoute';
 
 const httpLink = createHttpLink({
-  uri: "https://backend-prueba-ciclo4.herokuapp.com/graphql",
+  uri: "http://localhost:4000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -87,7 +88,8 @@ function App() {
                   path="/usuarios/editar/:_id"
                   element={<EditarUsuario />}
                 />
-                <Route path="page2" element={<Page2 />} />
+                <Route path="/proyectos" element={<IndexProyectos />} />
+                <Route path="/proyectos/crear" element={<CrearProyecto />} />
                 <Route path="category1" element={<IndexCategory1 />} />
                 <Route path="category1/page1" element={<Category1 />} />
               </Route>

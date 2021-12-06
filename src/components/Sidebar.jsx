@@ -6,12 +6,12 @@ const SidebarLinks = () => {
   return (
     <ul className="mt-12">
       <SidebarRoute to="" title="Inicio" icon="fas fa-home" />
-      <PrivateComponent roleList={["ADMINISTRADOR"]}>
+      <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
         <SidebarRoute to="/usuarios" title="Usuarios" icon="fas fa-user" />
       </PrivateComponent>
-      <SidebarRoute to="/page2" title="Pagina2" icon="fas fa-smile-wink" />
-      <SidebarRoute to="/category1" title="Catego 1" icon="fab fa-amazon" />
-      <SidebarRoute to="/category1/page1" title="Test" icon="fas fa-car" />
+      <SidebarRoute to="/proyectos" title="Proyectos" icon="fas fa-smile-wink" />
+      <SidebarRoute to="/category1" title="Inscripciones" icon="fab fa-amazon" />
+      <SidebarRoute to="/category1/page1" title="Avances" icon="fas fa-car" />
       <Logout />
     </ul>
   );
@@ -24,7 +24,7 @@ const Logout = () => {
   };
   return (
     <li>
-      <NavLink to="/auth/login" className="sidebar-route text-red-700">
+      <NavLink to="/auth/login" className="sidebar-route text-white">
         <div className="flex items-center" onClick={() => deleteToken()}>
           <i className="fas fa-sign-out-alt" />
           <span className="text-sm  ml-2">Cerrar Sesión</span>
@@ -36,11 +36,9 @@ const Logout = () => {
 
 const Logo = () => {
   return (
-    <div className="py-3 w-full flex flex-col items-center justify-center">
-      <img src="logo.png" alt="Logo" className="h-16" />
-      <span className="my-2 text-xl font-bold text-center">
-        Uniayudas
-      </span>
+    <div className='py-3 w-full flex flex-col items-center justify-center'>
+      <img src='logo.png' alt='Logo' className='h-16' />
+      <span className='my-2 text-xl font-bold text-center'>Gestion de proyectos</span>
     </div>
   );
 };
@@ -93,8 +91,8 @@ const SidebarRoute = ({ to, title, icon }) => {
         to={to}
         className={({ isActive }) =>
           isActive
-            ? "sidebar-route text-white bg-indigo-700"
-            : "sidebar-route text-gray-900 hover:text-white hover:bg-indigo-400"
+            ? "sidebar-route text-white bg-blue-500"
+            : "sidebar-route text-gray-900 hover:text-white hover:bg-blue-400"
         }
       >
         <div className="flex items-center">

@@ -7,11 +7,11 @@
 .tabla td,
 .tabla th {
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
 }
 
 .tabla th {
-  background-color: #04aa46;
+  background-color: #8F141B;
   color: white;
   padding-top: 12px;
   padding-bottom: 12px;

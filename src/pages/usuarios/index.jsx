@@ -5,9 +5,15 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Enum_Rol, Enum_EstadoUsuario } from "utils/enum";
 import PrivateRoute from "components/PrivateRoute";
+import { useUser } from "context/userContext";
+// import { GET_ESTUDIANTES } from "graphql/usuarios/queries";
 
 const IndexUsuarios = () => {
+  const { userData } = useUser();
+
   const { data, error, loading } = useQuery(GET_USUARIOS);
+
+  // const { data: dataEstudiantes, error: errorEstudiantes, loading: loadingEstudiantes } = useQuery(GET_ESTUDIANTES);
 
   useEffect(() => {
     if (error) {
@@ -18,13 +24,13 @@ const IndexUsuarios = () => {
   if (loading) return <div>Cargando....</div>;
 
   return (
-    <PrivateRoute roleList={["ADMINISTRADOR"]}>
+    <PrivateRoute roleList={["ADMINISTRADOR", "LIDER"]}>
       <div>
         Datos Usuarios:
         <table className="tabla">
           <thead>
             <tr>
-              <th>Nombre</th>
+              <th>Nombres</th>
               <th>Apellidos</th>
               <th>Correo</th>
               <th>Identificación</th>
