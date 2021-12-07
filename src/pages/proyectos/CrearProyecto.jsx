@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 import { ObjContext } from "context/objContext";
 import { useObj } from "context/objContext";
 import { CREAR_PROYECTO } from "graphql/proyectos/mutations";
+import { toast } from "react-toastify";
 
 const CrearProyecto = () => {
   const { form, formData, updateFormData } = useFormData();
@@ -50,6 +51,7 @@ const CrearProyecto = () => {
     crearProyecto({
       variables: formData,
     });
+    toast.success("Proyecto creado con exito");
   };
 
   if (loading) return <div>Loading...</div>;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import PrivateRoute from "components/PrivateRoute";
 import { GET_INSCRIPCIONES } from "graphql/inscripciones/queries";
@@ -20,7 +20,7 @@ const IndexInscripciones = () => {
   return (
     <PrivateRoute roleList={["ADMINISTRADOR", "LIDER"]}>
       <div className="p-10 flex flex-col items-justify ">
-        <h1 className="text-gray-900 text-xl font-bold uppercase">
+        <h1 className="text-gray-900 text-xl font-bold uppercase my-5">
           Inscripciones
         </h1>
 
@@ -100,7 +100,7 @@ const Inscripcion = ({ inscripcion, refetch }) => {
       toast.success("Inscripcion aprobada con exito");
       refetch();
     }
-  }, [data]);
+  }, [data, refetch]);
 
   useEffect(() => {
     if (error) {

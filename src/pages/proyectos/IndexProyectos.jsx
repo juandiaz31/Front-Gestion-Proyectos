@@ -19,11 +19,12 @@ import {
 } from "components/Accordion";
 
 const IndexProyectos = () => {
-  const { data: queryData, loading, error } = useQuery(GET_PROYECTOS);
+  const { data: queryData, loading, error, refetch } = useQuery(GET_PROYECTOS);
 
   useEffect(() => {
     console.log("datos proyecto", queryData);
-  }, [queryData]);
+    refetch();
+  }, [queryData, refetch]);
 
   if (loading) return <div>Cargando...</div>;
 
@@ -182,6 +183,7 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
     if (data) {
       console.log(data);
       toast.success("Inscripcion creada con exito");
+      
     }
   }, [data]);
 
