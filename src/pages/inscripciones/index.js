@@ -6,20 +6,39 @@ import { APROBAR_INSCRIPCION } from "graphql/inscripciones/mutations";
 import ButtonLoading from "components/ButtonLoading";
 import { toast } from "react-toastify";
 
-
+import {
+  AccordionStyled,
+  AccordionSummaryStyled,
+  AccordionDetailsStyled,
+} from "components/Accordion";
 
 const IndexInscripciones = () => {
-  const { data, loading, error } = useQuery(GET_INSCRIPCIONES);
+  const { data, loading, error, refetch } = useQuery(GET_INSCRIPCIONES);
 
   if (loading) return <div>...Loading</div>;
 
   return (
     <PrivateRoute roleList={["ADMINISTRADOR", "LIDER"]}>
-      <div className="p-10 flex flex-col items-center">
+      <div className="p-10 flex flex-col items-justify ">
         <h1 className="text-gray-900 text-xl font-bold uppercase">
           Inscripciones
         </h1>
-        <table className="tabla">
+
+        <AccordionInscripcion
+          titulo="Inscripciones aprobadas"
+          data={data.Inscripciones.filter((el) => el.estado === "ACEPTADO")}
+        />
+        <AccordionInscripcion
+          titulo="Inscripciones pendientes"
+          data={data.Inscripciones.filter((el) => el.estado === "PENDIENTE")}
+          refetch={refetch}
+        />
+        <AccordionInscripcion
+          titulo="Inscripciones rechazadas"
+          data={data.Inscripciones.filter((el) => el.estado === "RECHAZADO")}
+        />
+
+        {/* <table className="tabla">
           <thead>
             <tr>
               <th>Proyecto</th>
@@ -34,19 +53,52 @@ const IndexInscripciones = () => {
                 return <Inscripcion inscripcion={inscripcion} />;
               })}
           </tbody>
-        </table>
+        </table> */}
       </div>
     </PrivateRoute>
   );
 };
 
-const Inscripcion = ({ inscripcion }) => {
+const AccordionInscripcion = ({ data, titulo, refetch = () => {} }) => {
+  return (
+    <AccordionStyled>
+      <AccordionSummaryStyled>
+        {titulo} ({data.length})
+      </AccordionSummaryStyled>
+      <AccordionDetailsStyled>
+        <div className="w-full">
+          <table className="tabla">
+            <thead>
+              <tr>
+                <th>Proyecto</th>
+                <th>Estudiante</th>
+                <th>Estado</th>
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data &&
+                data.map((inscripcion) => {
+                  return (
+                    <Inscripcion inscripcion={inscripcion} refetch={refetch} />
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
+      </AccordionDetailsStyled>
+    </AccordionStyled>
+  );
+};
+
+const Inscripcion = ({ inscripcion, refetch }) => {
   const [aprobarInscripcion, { data, loading, error }] =
     useMutation(APROBAR_INSCRIPCION);
 
   useEffect(() => {
     if (data) {
       toast.success("Inscripcion aprobada con exito");
+      refetch();
     }
   }, [data]);
 
