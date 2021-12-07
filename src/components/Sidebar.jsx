@@ -9,9 +9,10 @@ const SidebarLinks = () => {
       <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
         <SidebarRoute to="/usuarios" title="Usuarios" icon="fas fa-user" />
       </PrivateComponent>
-      <SidebarRoute to="/proyectos" title="Proyectos" icon="fas fa-smile-wink" />
-      <SidebarRoute to="/category1" title="Inscripciones" icon="fab fa-amazon" />
-      <SidebarRoute to="/category1/page1" title="Avances" icon="fas fa-car" />
+      <SidebarRoute to="/proyectos" title="Proyectos" icon="fas fa-file-alt" />
+      <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
+       <SidebarRoute to="/inscripciones" title="Aprobacion de inscripciones" icon="fas fa-file-alt" />
+      </PrivateComponent>
       <Logout />
     </ul>
   );
@@ -36,9 +37,11 @@ const Logout = () => {
 
 const Logo = () => {
   return (
-    <div className='py-3 w-full flex flex-col items-center justify-center'>
-      <img src='logo.png' alt='Logo' className='h-16' />
-      <span className='my-2 text-xl font-bold text-center'>Gestion de proyectos</span>
+    <div className="py-3 w-full flex flex-col items-center justify-center">
+      <img src="logo.png" alt="Logo" className="h-16" />
+      <span className="my-2 text-xl font-bold text-center">
+        Gestion de proyectos
+      </span>
     </div>
   );
 };

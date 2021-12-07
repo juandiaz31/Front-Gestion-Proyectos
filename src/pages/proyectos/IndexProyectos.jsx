@@ -1,34 +1,22 @@
 import React, { useEffect, useState } from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import PrivateComponent from "components/PrivateComponent";
-import { Dialog } from '@mui/material';
+import { Dialog } from "@mui/material";
 import DropDown from "components/Dropdown";
 import ButtonLoading from "components/ButtonLoading";
 import { Enum_EstadoProyecto } from "utils/enum";
 import useFormData from "hooks/useFormData";
 import { GET_PROYECTOS } from "graphql/proyectos/queries";
 import { EDITAR_PROYECTO } from "graphql/proyectos/mutations";
-
-const AccordionStyled = styled((props) => <Accordion {...props} />)(
-  ({ theme }) => ({
-    backgroundColor: "#8F141B",
-  })
-);
-const AccordionSummaryStyled = styled((props) => (
-  <AccordionSummary {...props} />
-))(({ theme }) => ({
-  backgroundColor: "#8F141B",
-}));
-const AccordionDetailsStyled = styled((props) => (
-  <AccordionDetails {...props} />
-))(({ theme }) => ({
-  backgroundColor: "#FFFFFF",
-}));
+import { CREAR_INSCRIPCION } from "graphql/inscripciones/mutations";
+import { useUser } from "context/userContext";
+import { toast } from "react-toastify";
+import {
+  AccordionStyled,
+  AccordionSummaryStyled,
+  AccordionDetailsStyled,
+} from "components/Accordion";
 
 const IndexProyectos = () => {
   const { data: queryData, loading, error } = useQuery(GET_PROYECTOS);
@@ -43,11 +31,13 @@ const IndexProyectos = () => {
     return (
       <div className="p-10 flex flex-col items-center">
         <h1 className="text-gray-900 text-xl font-bold uppercase">Proyectos</h1>
-        <div className="self-end my-5">
-          <button className="bg-gray-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400">
-            <Link to="/proyectos/crear">Crear nuevo proyecto</Link>
-          </button>
-        </div>
+        <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
+          <div className="self-end my-5">
+            <button className="bg-gray-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400">
+              <Link to="/proyectos/crear">Crear nuevo proyecto</Link>
+            </button>
+          </div>
+        </PrivateComponent>
         {queryData.Proyectos.map((proyecto) => {
           return (
             <div className="w-full">
@@ -85,7 +75,16 @@ const AccordionProyecto = ({ proyecto }) => {
               }}
             />
           </PrivateComponent>
-          <div>Liderado Por: {proyecto.lider.nombre} {proyecto.lider.apellido} </div>
+          <PrivateComponent roleList={["ESTUDIANTE"]}>
+            <InscripcionProyecto
+              idProyecto={proyecto._id}
+              estado={proyecto.estado}
+              inscripciones={proyecto.inscripciones}
+            />
+          </PrivateComponent>
+          <div>
+            Liderado Por: {proyecto.lider.nombre} {proyecto.lider.apellido}{" "}
+          </div>
           <div className="flex">
             {proyecto.objetivos.map((objetivo) => {
               return (
@@ -158,6 +157,56 @@ const Objetivo = ({ tipo, descripcion }) => {
         <div>Editar</div>
       </PrivateComponent>
     </div>
+  );
+};
+
+const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
+  const [crearInscripcion, { data, loading, error }] =
+    useMutation(CREAR_INSCRIPCION);
+  const { userData } = useUser();
+  const [estadoInscripcion, setEstadoInscripcion] = useState("");
+
+  useEffect(() => {
+    if (userData && inscripciones) {
+      const filtro = inscripciones.filter(
+        (el) => el.estudiante._id === userData._id
+      );
+
+      if (filtro.length > 0) {
+        setEstadoInscripcion(filtro[0].estado);
+      }
+    }
+  }, [userData, inscripciones]);
+
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      toast.success("Inscripcion creada con exito");
+    }
+  }, [data]);
+
+  const confirmarInscripcion = () => {
+    crearInscripcion({
+      variables: { proyecto: idProyecto, estudiante: userData._id },
+    });
+  };
+
+  return (
+    <>
+      {estadoInscripcion !== "" ? (
+        <span>
+          Te encuentras inscrito a este proyecto, Estado de Inscripcion:{" "}
+          {estadoInscripcion}
+        </span>
+      ) : (
+        <ButtonLoading
+          onClick={() => confirmarInscripcion()}
+          disabled={estado === "INACTIVO"}
+          loading={loading}
+          text="Inscribirse"
+        />
+      )}
+    </>
   );
 };
 

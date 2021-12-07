@@ -9,8 +9,7 @@ import {
   InMemoryCache,
 } from "@apollo/client";
 import Index from "pages/Index";
-import IndexCategory1 from "pages/category1/Index";
-import Category1 from "pages/category1/CategoryPage1";
+
 import IndexUsuarios from "pages/usuarios";
 import EditarUsuario from "pages/usuarios/editar";
 import "styles/globals.css";
@@ -23,6 +22,8 @@ import { setContext } from "@apollo/client/link/context";
 import jwt_decode from "jwt-decode";
 import IndexProyectos from "pages/proyectos/IndexProyectos";
 import CrearProyecto from "pages/proyectos/CrearProyecto";
+import IndexInscripciones from "pages/inscripciones";
+
 // import PrivateRoute from 'components/PrivateRoute';
 
 const httpLink = createHttpLink({
@@ -90,8 +91,7 @@ function App() {
                 />
                 <Route path="/proyectos" element={<IndexProyectos />} />
                 <Route path="/proyectos/crear" element={<CrearProyecto />} />
-                <Route path="category1" element={<IndexCategory1 />} />
-                <Route path="category1/page1" element={<Category1 />} />
+                <Route path="/inscripciones" element={<IndexInscripciones />} />
               </Route>
               <Route path="/auth" element={<AuthLayout />}>
                 <Route path="register" element={<Register />} />
