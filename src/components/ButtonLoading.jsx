@@ -4,6 +4,7 @@ import ReactLoading from "react-loading";
 const ButtonLoading = ({ disabled, loading, text, onClick = () => {} }) => {
   return (
     <button
+      data-testid="button-loading"
       onClick={onClick}
       disabled={disabled}
       type="submit"
