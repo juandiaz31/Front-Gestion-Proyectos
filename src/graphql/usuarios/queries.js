@@ -42,4 +42,16 @@ const GET_USUARIO = gql`
   }
 `;
 
-export { GET_USUARIOS, GET_USUARIO, GET_ESTUDIANTES };
+const GET_PERFIL_USUARIO = gql`
+  query PerfilUsuario($id: String!) {
+    PerfilUsuario(_id: $id) {
+      _id
+      nombre
+      apellido
+      identificacion
+      correo
+    }
+  }
+`;
+
+export { GET_USUARIOS, GET_USUARIO, GET_ESTUDIANTES, GET_PERFIL_USUARIO };

@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import PrivateComponent from "components/PrivateComponent";
 import { Dialog } from "@mui/material";
 import DropDown from "components/Dropdown";
+import Input from "components/Input";
 import ButtonLoading from "components/ButtonLoading";
 import { Enum_EstadoProyecto } from "utils/enum";
 import useFormData from "hooks/useFormData";
@@ -17,14 +18,17 @@ import {
   AccordionSummaryStyled,
   AccordionDetailsStyled,
 } from "components/Accordion";
+import { ELIMINAR_OBJETIVO } from "graphql/proyectos/mutations";
+import ReactLoading from "react-loading";
+import { Enum_TipoObjetivo } from "utils/enum";
+import { EDITAR_OBJETIVO } from "graphql/proyectos/mutations";
 
 const IndexProyectos = () => {
-  const { data: queryData, loading, error, refetch } = useQuery(GET_PROYECTOS);
+  const { data: queryData, loading } = useQuery(GET_PROYECTOS);
 
   useEffect(() => {
     console.log("datos proyecto", queryData);
-    refetch();
-  }, [queryData, refetch]);
+  }, [queryData]);
 
   if (loading) return <div>Cargando...</div>;
 
@@ -34,7 +38,7 @@ const IndexProyectos = () => {
         <h1 className="text-gray-900 text-xl font-bold uppercase">Proyectos</h1>
         <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
           <div className="self-end my-5">
-            <button className="bg-gray-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400">
+            <button className="bg-blue-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400">
               <Link to="/proyectos/crear">Crear nuevo proyecto</Link>
             </button>
           </div>
@@ -87,9 +91,12 @@ const AccordionProyecto = ({ proyecto }) => {
             Liderado Por: {proyecto.lider.nombre} {proyecto.lider.apellido}{" "}
           </div>
           <div className="flex">
-            {proyecto.objetivos.map((objetivo) => {
+            {proyecto.objetivos.map((objetivo, index) => {
               return (
                 <Objetivo
+                  index={index}
+                  _id={objetivo._id}
+                  idProyecto={proyecto._id}
                   tipo={objetivo.tipo}
                   descripcion={objetivo.descripcion}
                 />
@@ -149,14 +156,123 @@ const FormEditProyecto = ({ _id }) => {
   );
 };
 
-const Objetivo = ({ tipo, descripcion }) => {
+const Objetivo = ({ _id, idProyecto, tipo, descripcion, index }) => {
+  const [mostrarEdicionObjetivo, setMostrarEdicionObjetivo] = useState(false);
+
+  const [eliminarObjetivo, { data: dataMutationEliminar, loading: loadingMutationEliminar}] = useMutation(ELIMINAR_OBJETIVO, {
+    refetchQueries: [{ query: GET_PROYECTOS }],
+  });
+
+  useEffect(() => {
+    console.log("eliminar objetivo", dataMutationEliminar);
+    if (dataMutationEliminar) {
+      toast.success("Objetivo eliminado con exito.");
+    }
+  }, [dataMutationEliminar]);
+
+  const ejecutarEliminarObjetivo = () => {
+    eliminarObjetivo({
+      variables: {
+        idProyecto,
+        idObjetivo: _id,
+      },
+    });
+  };
+
+  if (loadingMutationEliminar)
+    return <ReactLoading type="spin" height={100} width={100} />;
+
   return (
     <div className="mx-5 my-4 bg-yellow-200 p-8 rounded-lg flex flex-col items-center justify-center shadow-xl">
       <div className="text-lg font-bold">{tipo}</div>
       <div>{descripcion}</div>
-      <PrivateComponent roleList={["ADMINISTRADOR"]}>
-        <div>Editar</div>
+      <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
+        <div className="flex my-2">
+          <i
+            onClick={() => setMostrarEdicionObjetivo(true)}
+            className="fas fa-pen text-yellow-600 hover:text-yellow-400 cursor-pointer mx-2"
+          />
+          <i
+            onClick={ejecutarEliminarObjetivo}
+            className="fas fa-trash text-red-600 hover:text-red-400 cursor-pointer mx-2"
+          />
+        </div>
+        <Dialog
+          open={mostrarEdicionObjetivo}
+          onClose={() => setMostrarEdicionObjetivo(false)}
+        >
+          <EditarObjetivo
+            descripcion={descripcion}
+            tipo={tipo}
+            index={index}
+            idProyecto={idProyecto}
+            setMostrarEdicionObjetivo={setMostrarEdicionObjetivo}
+          />
+        </Dialog>
       </PrivateComponent>
+    </div>
+  );
+};
+
+const EditarObjetivo = ({
+  descripcion,
+  tipo,
+  index,
+  idProyecto,
+  setMostrarEdicionObjetivo,
+}) => {
+  const { form, formData, updateFormData } = useFormData();
+  const [editarObjetivo, { data: dataMutation, loading }] = useMutation(
+    EDITAR_OBJETIVO,
+    {
+      refetchQueries: [{ query: GET_PROYECTOS }],
+    }
+  );
+
+  useEffect(() => {
+    if (dataMutation) {
+      toast.success("Objetivo editado con exito");
+      setMostrarEdicionObjetivo(false);
+    }
+  }, [dataMutation, setMostrarEdicionObjetivo]);
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    editarObjetivo({
+      variables: {
+        idProyecto: idProyecto,
+        indexObjetivo: index,
+        campos: formData,
+      },
+    }).catch((e) => {
+      console.log(e);
+      toast.error("Error editanto el objetivo");
+    });
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold text-gray-900">Editar objetivo</h1>
+      <form ref={form} onChange={updateFormData} onSubmit={submitForm}>
+        <DropDown
+          label="Tipo de objetivo"
+          name="tipo"
+          required={true}
+          options={Enum_TipoObjetivo}
+          defaultValue={tipo}
+        />
+        <Input
+          label="Descripcion objetivo"
+          name="descripcion"
+          required={true}
+          defaultValue={descripcion}
+        />
+        <ButtonLoading
+          text="Confirmar"
+          disabled={Object.keys(formData).length === 0}
+          loading={loading}
+        />
+      </form>
     </div>
   );
 };
@@ -183,7 +299,6 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
     if (data) {
       console.log(data);
       toast.success("Inscripcion creada con exito");
-      
     }
   }, [data]);
 

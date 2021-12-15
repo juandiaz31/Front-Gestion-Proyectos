@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 const EDITAR_USUARIO = gql`
   mutation EditarUsuario(
@@ -28,4 +28,16 @@ const EDITAR_USUARIO = gql`
   }
 `;
 
-export { EDITAR_USUARIO };
+const EDITAR_PERFIL = gql`
+  mutation EditarPerfil($id: ID!, $campos: CamposEditarPerfil!) {
+    editarPerfil(_id: $id, campos: $campos) {
+      _id
+      nombre
+      apellido
+      identificacion
+      correo
+    }
+  }
+`;
+
+export { EDITAR_USUARIO, EDITAR_PERFIL };

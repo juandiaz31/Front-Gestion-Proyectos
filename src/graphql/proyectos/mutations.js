@@ -31,4 +31,28 @@ const CREAR_PROYECTO = gql`
   }
 `;
 
-export { EDITAR_PROYECTO, CREAR_PROYECTO };
+const ELIMINAR_OBJETIVO = gql`
+  mutation EliminarObjetivo($idProyecto: String!, $idObjetivo: String!) {
+    eliminarObjetivo(idProyecto: $idProyecto, idObjetivo: $idObjetivo) {
+      _id
+    }
+  }
+`;
+
+const EDITAR_OBJETIVO = gql`
+  mutation EditarObjetivo(
+    $idProyecto: String!
+    $indexObjetivo: Int!
+    $campos: camposObjetivo!
+  ) {
+    editarObjetivo(
+      idProyecto: $idProyecto
+      indexObjetivo: $indexObjetivo
+      campos: $campos
+    ) {
+      _id
+    }
+  }
+`;
+
+export { EDITAR_PROYECTO, CREAR_PROYECTO, ELIMINAR_OBJETIVO, EDITAR_OBJETIVO };
