@@ -24,6 +24,7 @@ import IndexProyectos from "pages/proyectos/IndexProyectos";
 import CrearProyecto from "pages/proyectos/CrearProyecto";
 import IndexInscripciones from "pages/inscripciones";
 import IndexProfile from "pages/Perfil/IndexProfile";
+import IndexAvances from "pages/avances";
 
 // import PrivateRoute from 'components/PrivateRoute';
 
@@ -86,10 +87,14 @@ function App() {
               <Route path="/" element={<PrivateLayout />}>
                 <Route path="" element={<Index />} />
                 <Route path="/usuarios" element={<IndexUsuarios />} />
-                <Route path="/usuarios/editar/:_id" element={<EditarUsuario />} />
+                <Route
+                  path="/usuarios/editar/:_id"
+                  element={<EditarUsuario />}
+                />
                 <Route path="/proyectos" element={<IndexProyectos />} />
                 <Route path="/proyectos/crear" element={<CrearProyecto />} />
                 <Route path="/inscripciones" element={<IndexInscripciones />} />
+                <Route path="/avances/:projectid" element={<IndexAvances />} />
                 <Route path="/perfil" element={<IndexProfile />} />
               </Route>
               <Route path="/auth" element={<AuthLayout />}>

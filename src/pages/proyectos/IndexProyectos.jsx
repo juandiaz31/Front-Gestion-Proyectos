@@ -159,7 +159,10 @@ const FormEditProyecto = ({ _id }) => {
 const Objetivo = ({ _id, idProyecto, tipo, descripcion, index }) => {
   const [mostrarEdicionObjetivo, setMostrarEdicionObjetivo] = useState(false);
 
-  const [eliminarObjetivo, { data: dataMutationEliminar, loading: loadingMutationEliminar}] = useMutation(ELIMINAR_OBJETIVO, {
+  const [
+    eliminarObjetivo,
+    { data: dataMutationEliminar, loading: loadingMutationEliminar },
+  ] = useMutation(ELIMINAR_OBJETIVO, {
     refetchQueries: [{ query: GET_PROYECTOS }],
   });
 
@@ -311,10 +314,20 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
   return (
     <>
       {estadoInscripcion !== "" ? (
-        <span>
-          Te encuentras inscrito a este proyecto, Estado de Inscripcion:{" "}
-          {estadoInscripcion}
-        </span>
+        <div className="flex flex-col items-start">
+          <span>
+            Te encuentras inscrito a este proyecto, Estado de Inscripcion:{" "}
+            {estadoInscripcion}
+          </span>
+          {estadoInscripcion === "ACEPTADO" && (
+            <Link
+              to={`/avances/${idProyecto}`}
+              className="bg-yellow-400 p-2 my-2 rounded-lg text-white hover:bg-yellow-200"
+            >
+              Agregar avance
+            </Link>
+          )}
+        </div>
       ) : (
         <ButtonLoading
           onClick={() => confirmarInscripcion()}
