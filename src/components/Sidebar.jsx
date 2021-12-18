@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "context/authContext";
 import PrivateComponent from "./PrivateComponent";
+// import { useUser } from "context/userContext";
+
 const SidebarLinks = () => {
+  // const { userData } = useUser();
+
   return (
     <ul className="mt-12">
       <SidebarRoute to="" title="Inicio" icon="fas fa-home" />
@@ -19,6 +23,11 @@ const SidebarLinks = () => {
         />
       </PrivateComponent>
       <SidebarRoute to="/avances" title="Avances" icon="fas fa-keyboard" />
+      {/* <SidebarRoute
+        to={`/editarPerfil/${userData._id}`}
+        title="Edicion perfil prueba"
+        icon="fas fa-keyboard"
+      /> */}
       <Logout />
     </ul>
   );

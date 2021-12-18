@@ -6,6 +6,10 @@ const GET_PROYECTOS = gql`
       _id
       nombre
       estado
+      presupuesto
+      fechaInicio
+      fechaFin
+      fase
       objetivos {
         _id
         descripcion
@@ -13,7 +17,7 @@ const GET_PROYECTOS = gql`
       }
       lider {
         _id
-        correo
+        identificacion
         nombre
         apellido
       }

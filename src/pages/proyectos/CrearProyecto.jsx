@@ -12,12 +12,13 @@ import { ObjContext } from "context/objContext";
 import { useObj } from "context/objContext";
 import { CREAR_PROYECTO } from "graphql/proyectos/mutations";
 import { toast } from "react-toastify";
+import { GET_LIDERES } from "graphql/usuarios/queries";
 
 const CrearProyecto = () => {
   const { form, formData, updateFormData } = useFormData();
   const [listaUsuarios, setListaUsuarios] = useState([]);
 
-  const { data, error, loading } = useQuery(GET_USUARIOS, {
+  const { data, error, loading } = useQuery(GET_LIDERES, {
     variables: {
       filtro: { rol: "LIDER" },
     },
@@ -31,7 +32,7 @@ const CrearProyecto = () => {
   useEffect(() => {
     if (data) {
       const lu = {};
-      data.Usuarios.forEach((elemento) => {
+      data.Lideres.forEach((elemento) => {
         lu[elemento._id] = elemento.nombre + " " + elemento.apellido;
       });
 
@@ -77,18 +78,7 @@ const CrearProyecto = () => {
           required={true}
           type="number"
         />
-        <Input
-          label="Fecha de Inicio :"
-          name="fechaInicio"
-          required={true}
-          type="date"
-        />
-        <Input
-          label="Fecha de Fin:"
-          name="fechaFin"
-          required={true}
-          type="date"
-        />
+
         <DropDown
           label="Líder"
           name="lider"

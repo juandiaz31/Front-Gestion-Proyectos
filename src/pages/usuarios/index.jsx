@@ -5,12 +5,10 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Enum_Rol, Enum_EstadoUsuario } from "utils/enum";
 import PrivateRoute from "components/PrivateRoute";
-import { useUser } from "context/userContext";
+
 // import { GET_ESTUDIANTES } from "graphql/usuarios/queries";
 
 const IndexUsuarios = () => {
-  const { userData } = useUser();
-
   const { data, error, loading } = useQuery(GET_USUARIOS);
 
   // const { data: dataEstudiantes, error: errorEstudiantes, loading: loadingEstudiantes } = useQuery(GET_ESTUDIANTES);
@@ -26,7 +24,7 @@ const IndexUsuarios = () => {
   return (
     <PrivateRoute roleList={["ADMINISTRADOR", "LIDER"]}>
       <div className="p-10 flex flex-col items-center">
-      <h1 className="text-gray-900 text-xl font-bold uppercase">Usuarios</h1>
+        <h1 className="text-gray-900 text-xl font-bold uppercase">Usuarios</h1>
         <table className="tabla">
           <thead>
             <tr>

@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import PrivateRoute from "components/PrivateRoute";
 import { GET_INSCRIPCIONES } from "graphql/inscripciones/queries";
@@ -74,6 +74,7 @@ const AccordionInscripcion = ({ data, titulo, refetch = () => {} }) => {
                 <th>Estudiante</th>
                 <th>Estado</th>
                 <th>Accion</th>
+                <th>Fecha de Ingreso</th>
               </tr>
             </thead>
             <tbody>
@@ -136,6 +137,7 @@ const Inscripcion = ({ inscripcion, refetch }) => {
             />
           )}
         </td>
+        <td>{inscripcion.fechaIngreso}</td>
       </tr>
     </>
   );

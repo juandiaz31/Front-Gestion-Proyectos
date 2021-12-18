@@ -54,4 +54,19 @@ const GET_PERFIL_USUARIO = gql`
   }
 `;
 
-export { GET_USUARIOS, GET_USUARIO, GET_ESTUDIANTES, GET_PERFIL_USUARIO };
+const GET_LIDERES = gql`
+  query Lideres {
+    Lideres {
+      _id
+      nombre
+      apellido
+    }
+  }
+`;
+export {
+  GET_USUARIOS,
+  GET_USUARIO,
+  GET_ESTUDIANTES,
+  GET_PERFIL_USUARIO,
+  GET_LIDERES,
+};

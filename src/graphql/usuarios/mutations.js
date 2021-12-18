@@ -7,7 +7,6 @@ const EDITAR_USUARIO = gql`
     $apellido: String!
     $identificacion: String!
     $correo: String!
-    $estado: Enum_EstadoUsuario!
   ) {
     editarUsuario(
       _id: $_id
@@ -15,7 +14,6 @@ const EDITAR_USUARIO = gql`
       apellido: $apellido
       identificacion: $identificacion
       correo: $correo
-      estado: $estado
     ) {
       _id
       nombre
@@ -23,14 +21,13 @@ const EDITAR_USUARIO = gql`
       correo
       estado
       identificacion
-      rol
     }
   }
 `;
 
 const EDITAR_PERFIL = gql`
-  mutation EditarPerfil($id: ID!, $campos: CamposEditarPerfil!) {
-    editarPerfil(_id: $id, campos: $campos) {
+  mutation EditarPerfil($_id: String!, $campos: CamposEditarPerfil!) {
+    editarPerfil(_id: $_id, campos: $campos) {
       _id
       nombre
       apellido

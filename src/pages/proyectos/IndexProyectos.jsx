@@ -35,8 +35,10 @@ const IndexProyectos = () => {
   if (queryData.Proyectos) {
     return (
       <div className="p-10 flex flex-col items-center">
-        <h1 className="text-gray-900 text-xl font-bold uppercase">Proyectos</h1>
-        <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
+        <h1 className="text-gray-900 text-xl font-bold uppercase p-4">
+          Proyectos
+        </h1>
+        <PrivateComponent roleList={["LIDER"]}>
           <div className="self-end my-5">
             <button className="bg-blue-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400">
               <Link to="/proyectos/crear">Crear nuevo proyecto</Link>
@@ -45,7 +47,7 @@ const IndexProyectos = () => {
         </PrivateComponent>
         {queryData.Proyectos.map((proyecto) => {
           return (
-            <div className="w-full">
+            <div className="w-full ">
               <AccordionProyecto proyecto={proyecto} />
             </div>
           );
@@ -67,19 +69,19 @@ const AccordionProyecto = ({ proyecto }) => {
         >
           <div className="flex w-full justify-between">
             <div className="uppercase font-bold text-gray-100 ">
-              {proyecto.nombre} - {proyecto.estado}
+              {proyecto.nombre} - {proyecto.estado} -{" "}
+              <PrivateComponent roleList={["LIDER", "ADMINISTRADOR"]}>
+                <i
+                  className="mx-4 fas fa-pen text-gray-100 hover:text-gray-400"
+                  onClick={() => {
+                    setShowDialog(true);
+                  }}
+                />
+              </PrivateComponent>
             </div>
           </div>
         </AccordionSummaryStyled>
         <AccordionDetailsStyled>
-          <PrivateComponent roleList={["ADMINISTRADOR"]}>
-            <i
-              className="mx-4 fas fa-pen text-yellow-600 hover:text-yellow-400"
-              onClick={() => {
-                setShowDialog(true);
-              }}
-            />
-          </PrivateComponent>
           <PrivateComponent roleList={["ESTUDIANTE"]}>
             <InscripcionProyecto
               idProyecto={proyecto._id}
@@ -88,8 +90,39 @@ const AccordionProyecto = ({ proyecto }) => {
             />
           </PrivateComponent>
           <div>
-            Liderado Por: {proyecto.lider.nombre} {proyecto.lider.apellido}{" "}
+            <strong>Liderado por:</strong> {proyecto.lider.nombre}{" "}
+            {proyecto.lider.apellido} -{proyecto.lider.identificacion}
           </div>
+
+          <div>
+            <strong>Fase del Proyecto: </strong>
+            {proyecto.fase}
+          </div>
+          <div>
+            {" "}
+            <strong> Presupuesto: </strong>
+            {proyecto.presupuesto}{" "}
+          </div>
+          <div>
+            <strong>Fecha de Inicio: </strong>
+            {proyecto.fechaInicio}{" "}
+          </div>
+
+          <div>
+            <strong>Fecha de Terminacion: </strong>
+            {proyecto.fechaFin}{" "}
+          </div>
+          <div className="my-2">
+            <PrivateComponent roleList={["LIDER"]}>
+              <Link
+                to={`/avances/${proyecto._id}`}
+                className="bg-yellow-400 p-2 my-2 rounded-lg text-white hover:bg-yellow-200"
+              >
+                Avances
+              </Link>
+            </PrivateComponent>
+          </div>
+
           <div className="flex">
             {proyecto.objetivos.map((objetivo, index) => {
               return (
@@ -129,7 +162,13 @@ const FormEditProyecto = ({ _id }) => {
         _id,
         campos: formData,
       },
-    });
+    })
+      .then(() => {
+        toast.success("Estado del proyecto actualizado");
+      })
+      .catch((error) => {
+        toast.error("Error editando el proyecto");
+      });
   };
 
   useEffect(() => {
@@ -150,6 +189,7 @@ const FormEditProyecto = ({ _id }) => {
           name="estado"
           options={Enum_EstadoProyecto}
         />
+
         <ButtonLoading disabled={false} loading={loading} text="Confirmar" />
       </form>
     </div>
@@ -189,7 +229,7 @@ const Objetivo = ({ _id, idProyecto, tipo, descripcion, index }) => {
     <div className="mx-5 my-4 bg-yellow-200 p-8 rounded-lg flex flex-col items-center justify-center shadow-xl">
       <div className="text-lg font-bold">{tipo}</div>
       <div>{descripcion}</div>
-      <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
+      <PrivateComponent roleList={["LIDER"]}>
         <div className="flex my-2">
           <i
             onClick={() => setMostrarEdicionObjetivo(true)}
@@ -312,19 +352,20 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
   };
 
   return (
-    <>
+    <div>
       {estadoInscripcion !== "" ? (
         <div className="flex flex-col items-start">
           <span>
             Te encuentras inscrito a este proyecto, Estado de Inscripcion:{" "}
             {estadoInscripcion}
           </span>
+          {/* Revisar esto porque los lideres no se pueden inscribir al proyecto ni pueden ser aceptados */}
           {estadoInscripcion === "ACEPTADO" && (
             <Link
               to={`/avances/${idProyecto}`}
               className="bg-yellow-400 p-2 my-2 rounded-lg text-white hover:bg-yellow-200"
             >
-              Agregar avance
+              Avances
             </Link>
           )}
         </div>
@@ -336,7 +377,7 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
           text="Inscribirse"
         />
       )}
-    </>
+    </div>
   );
 };
 

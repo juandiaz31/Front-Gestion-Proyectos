@@ -10,7 +10,10 @@ import { CREAR_AVANCE } from "graphql/avances/mutations";
 import { useUser } from "context/userContext";
 import { toast } from "react-toastify";
 import { FILTRAR_AVANCES } from "graphql/avances/queries";
-
+import PrivateComponent from "components/PrivateComponent";
+import { CREAR_OBSERVACION } from "graphql/avances/mutations";
+import { nanoid } from "nanoid";
+import { Link } from "react-router-dom";
 const IndexAvances = () => {
   const { projectid } = useParams();
   const [openDialog, setOpenDialog] = useState(false);
@@ -36,16 +39,23 @@ const IndexAvances = () => {
 
   return (
     <div className="p-10 flex flex-col items-center">
+      <Link to="/avances">
+        <i className="fas fa-arrow-left text-gray-600 cursor-pointer font-bold text-xl hover:text-gray-900" />
+      </Link>
       <h1 className="text-gray-900 text-xl font-bold uppercase">
         Avances del proyecto {projectid}
       </h1>
+
       <div className="self-end my-5">
-        <button
-          onClick={() => setOpenDialog(true)}
-          className="bg-blue-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400"
-        >
-          Crear avance
-        </button>
+        <PrivateComponent roleList={["ESTUDIANTE"]}>
+          <button
+            onClick={() => setOpenDialog(true)}
+            className="bg-blue-500 p-2 rounded-lg shadow-sm text-white hover:bg-gray-400"
+          >
+            Crear avance
+          </button>
+        </PrivateComponent>
+
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <CrearAvance proyecto={projectid} setOpenDialog={setOpenDialog} />
         </Dialog>
@@ -60,11 +70,77 @@ const IndexAvances = () => {
 };
 
 const Avance = ({ avance }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
     <div className="flex flex-col bg-red-400 m-4  p-4 rounded-lg">
-      <span>Descripcion: {avance.descripcion}</span>
-      <span>Fecha: {avance.fecha}</span>
-      <span>Observaciones: {avance.observaciones}</span>
+      <span>
+        <strong>Descripcion:</strong> {avance.descripcion}
+      </span>
+      <span>
+        <strong>Fecha: </strong> {avance.fecha}
+      </span>
+      <div className="flex flex-col">
+        <strong> Observaciones:</strong>{" "}
+        <>
+          {avance.observaciones.map((observacion) => {
+            return <span key={nanoid()}>- {observacion} </span>;
+          })}
+        </>
+      </div>
+      <PrivateComponent roleList={["LIDER"]}>
+        <button
+          onClick={() => setOpenDialog(true)}
+          className="bg-blue-500 p-2 rounded-lg shadow-sm text-white hover:bg-blue-400"
+        >
+          Agregar observacion
+        </button>
+      </PrivateComponent>
+      <Dialog
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false);
+        }}
+      >
+        <CrearObservacion _id={avance._id} setOpenDialog={setOpenDialog} />
+      </Dialog>
+    </div>
+  );
+};
+
+const CrearObservacion = ({ _id, setOpenDialog }) => {
+  const { formData, form, updateFormData } = useFormData();
+
+  const [crearObservacion, { loading: mutationLoading }] =
+    useMutation(CREAR_OBSERVACION);
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    crearObservacion({
+      variables: {
+        _id,
+        ...formData,
+      },
+    })
+      .then(() => {
+        toast.success("Observacion creada con exito");
+        setOpenDialog(false);
+      })
+      .catch(() => {
+        toast.error("Error creando la observacion");
+      });
+  };
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold text-gray-900">Agregar observacion</h1>
+      <form ref={form} onChange={updateFormData} onSubmit={submitForm}>
+        <Input name="observacion" type="text" required />
+        <ButtonLoading
+          text="Agregar observacion"
+          loading={mutationLoading}
+          disabled={Object.keys(formData).length === 0}
+        />
+      </form>
     </div>
   );
 };
