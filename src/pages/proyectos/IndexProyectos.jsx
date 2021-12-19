@@ -22,6 +22,9 @@ import { ELIMINAR_OBJETIVO } from "graphql/proyectos/mutations";
 import ReactLoading from "react-loading";
 import { Enum_TipoObjetivo } from "utils/enum";
 import { EDITAR_OBJETIVO } from "graphql/proyectos/mutations";
+import { Enum_FaseProyecto } from "utils/enum";
+import { GET_PROYETO } from "graphql/proyectos/queries";
+import { GET_PROYECTO } from "graphql/proyectos/queries";
 
 const IndexProyectos = () => {
   const { data: queryData, loading } = useQuery(GET_PROYECTOS);
@@ -61,6 +64,9 @@ const IndexProyectos = () => {
 
 const AccordionProyecto = ({ proyecto }) => {
   const [showDialog, setShowDialog] = useState(false);
+  const [mostrarCambioEstado, setmostrarCambioEstado] = useState(false);
+  const [mostrarCambioProyecto, setMostrarCambioProyecto] = useState(false);
+
   return (
     <>
       <AccordionStyled>
@@ -70,14 +76,32 @@ const AccordionProyecto = ({ proyecto }) => {
           <div className="flex w-full justify-between">
             <div className="uppercase font-bold text-gray-100 ">
               {proyecto.nombre} - {proyecto.estado} -{" "}
-              <PrivateComponent roleList={["LIDER", "ADMINISTRADOR"]}>
-                <i
-                  className="mx-4 fas fa-pen text-gray-100 hover:text-gray-400"
-                  onClick={() => {
-                    setShowDialog(true);
-                  }}
-                />
-              </PrivateComponent>
+              {proyecto.estado === "ACTIVO" ? (
+                <PrivateComponent roleList="LIDER">
+                  <button
+                    onClick={() => {
+                      setMostrarCambioProyecto(true);
+                    }}
+                    className="bg-blue-500 p-2 my-2 rounded-lg text-white hover:bg-blue-600"
+                  >
+                    Editar Proyecto
+                  </button>
+                </PrivateComponent>
+              ) : (
+                <></>
+              )}
+              {proyecto.fase !== "TERMINADO" ? (
+                <PrivateComponent roleList={["ADMINISTRADOR"]}>
+                  <i
+                    className="mx-4 fas fa-pen text-gray-100 hover:text-gray-400"
+                    onClick={() => {
+                      setShowDialog(true);
+                    }}
+                  />
+                </PrivateComponent>
+              ) : (
+                <div></div>
+              )}
             </div>
           </div>
         </AccordionSummaryStyled>
@@ -97,6 +121,18 @@ const AccordionProyecto = ({ proyecto }) => {
           <div>
             <strong>Fase del Proyecto: </strong>
             {proyecto.fase}
+            {proyecto.fase === "DESARROLLO" ? (
+              <PrivateComponent roleList={["ADMINISTRADOR"]}>
+                <i
+                  className="mx-4 fas fa-pen text-red-400 hover:text-red-600"
+                  onClick={() => {
+                    setmostrarCambioEstado(true);
+                  }}
+                />
+              </PrivateComponent>
+            ) : (
+              <div></div>
+            )}
           </div>
           <div>
             {" "}
@@ -138,11 +174,29 @@ const AccordionProyecto = ({ proyecto }) => {
           </div>
         </AccordionDetailsStyled>
       </AccordionStyled>
+      {/* Dialogo de cambiar estado del proyecto */}
       <Dialog
         open={showDialog}
         onClose={() => {
           setShowDialog(false);
         }}
+      >
+        <FormEditEstadoProyecto _id={proyecto._id} />
+      </Dialog>
+
+      {/* Dialogo de cambiar fase del proyecto */}
+      <Dialog
+        open={mostrarCambioEstado}
+        onClose={() => {
+          setmostrarCambioEstado(false);
+        }}
+      >
+        <FormEditFaseProyecto _id={proyecto._id} />
+      </Dialog>
+      {/* Dialogo de editar el proyecto */}
+      <Dialog
+        open={mostrarCambioProyecto}
+        onClose={() => setMostrarCambioProyecto(false)}
       >
         <FormEditProyecto _id={proyecto._id} />
       </Dialog>
@@ -151,6 +205,106 @@ const AccordionProyecto = ({ proyecto }) => {
 };
 
 const FormEditProyecto = ({ _id }) => {
+  console.log("id proyecto:", _id);
+  const { form, formData, updateFormData } = useFormData();
+  const [editarProyecto, { loading }] = useMutation(EDITAR_PROYECTO);
+  const { data: queryData } = useQuery(GET_PROYECTO, {
+    variables: {
+      _id: _id,
+    },
+  });
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    formData.presupuesto = parseFloat(formData.presupuesto);
+
+    editarProyecto({
+      variables: {
+        _id: _id,
+        campos: formData,
+      },
+    })
+      .then(() => {
+        toast.success("Proyecto editado exitosamente");
+      })
+      .catch(() => {
+        toast.error("Error editando el proyecto");
+      });
+  };
+  return (
+    <div className="p-4">
+      <h1 className="font-bold">Modificar Proyecto</h1>
+      <form
+        ref={form}
+        onChange={updateFormData}
+        onSubmit={submitForm}
+        className="flex flex-col items-center"
+      >
+        <Input
+          // defaultValue={queryData.Proyecto.nombre}
+          label="Nombre del proyecto:"
+          name="nombre"
+          type="string"
+          required={true}
+        />
+        <Input
+          // defaultValue={queryData.Proyecto.presupuesto}
+          label="Presupuesto:"
+          name="presupuesto"
+          required={true}
+          type="number"
+        />
+
+        <ButtonLoading
+          disabled={Object.keys(formData).length === 0}
+          loading={loading}
+          text="Confirmar"
+        />
+      </form>
+    </div>
+  );
+};
+
+const FormEditFaseProyecto = ({ _id }) => {
+  const { form, formData, updateFormData } = useFormData();
+  const [editarProyecto, { loading, error }] = useMutation(EDITAR_PROYECTO, {
+    refetchQueries: [GET_PROYECTOS],
+  });
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    editarProyecto({
+      variables: {
+        _id,
+        campos: formData,
+      },
+    })
+      .then(() => {
+        toast.success("Fase del proyecto actualizada exitosamente");
+      })
+      .catch((error) => {
+        toast.error("Error editando la fase del proyecto");
+      });
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="font-bold">Modificar Fase del Proyecto</h1>
+      <form
+        className="flex flex-col items-center"
+        ref={form}
+        onChange={updateFormData}
+        onSubmit={submitForm}
+      >
+        <DropDown name="fase" options={Enum_FaseProyecto} />
+
+        <ButtonLoading disabled={false} loading={loading} text="Confirmar" />
+      </form>
+    </div>
+  );
+};
+
+const FormEditEstadoProyecto = ({ _id }) => {
   const { form, formData, updateFormData } = useFormData();
   const [editarProyecto, { data: dataMutation, loading, error }] =
     useMutation(EDITAR_PROYECTO);
@@ -167,7 +321,7 @@ const FormEditProyecto = ({ _id }) => {
         toast.success("Estado del proyecto actualizado");
       })
       .catch((error) => {
-        toast.error("Error editando el proyecto");
+        toast.error("Error editando el estado del proyecto");
       });
   };
 
@@ -355,12 +509,12 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
     <div>
       {estadoInscripcion !== "" ? (
         <div className="flex flex-col items-start">
+          <span>Ya has solicitado inscribirte a este proyecto.</span>
           <span>
-            Te encuentras inscrito a este proyecto, Estado de Inscripcion:{" "}
-            {estadoInscripcion}
+            <strong>Estado de Inscripcion: </strong> {estadoInscripcion}{" "}
           </span>
-          {/* Revisar esto porque los lideres no se pueden inscribir al proyecto ni pueden ser aceptados */}
-          {estadoInscripcion === "ACEPTADO" && (
+
+          {estadoInscripcion === "ACEPTADO" && estado === "ACTIVO" && (
             <Link
               to={`/avances/${idProyecto}`}
               className="bg-yellow-400 p-2 my-2 rounded-lg text-white hover:bg-yellow-200"

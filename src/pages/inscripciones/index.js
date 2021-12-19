@@ -11,6 +11,8 @@ import {
   AccordionSummaryStyled,
   AccordionDetailsStyled,
 } from "components/Accordion";
+import { RECHAZAR_INSCRIPCION } from "graphql/inscripciones/mutations";
+import { useUser } from "context/userContext";
 
 const IndexInscripciones = () => {
   const { data, loading, error, refetch } = useQuery(GET_INSCRIPCIONES);
@@ -37,23 +39,6 @@ const IndexInscripciones = () => {
           titulo="Inscripciones rechazadas"
           data={data.Inscripciones.filter((el) => el.estado === "RECHAZADO")}
         />
-
-        {/* <table className="tabla">
-          <thead>
-            <tr>
-              <th>Proyecto</th>
-              <th>Estudiante</th>
-              <th>Estado</th>
-              <th>Accion</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data &&
-              data.Inscripciones.map((inscripcion) => {
-                return <Inscripcion inscripcion={inscripcion} />;
-              })}
-          </tbody>
-        </table> */}
       </div>
     </PrivateRoute>
   );
@@ -62,9 +47,7 @@ const IndexInscripciones = () => {
 const AccordionInscripcion = ({ data, titulo, refetch = () => {} }) => {
   return (
     <AccordionStyled>
-      <AccordionSummaryStyled>
-        {titulo} ({data.length})
-      </AccordionSummaryStyled>
+      <AccordionSummaryStyled>{titulo}</AccordionSummaryStyled>
       <AccordionDetailsStyled>
         <div className="w-full">
           <table className="tabla">
@@ -75,6 +58,7 @@ const AccordionInscripcion = ({ data, titulo, refetch = () => {} }) => {
                 <th>Estado</th>
                 <th>Accion</th>
                 <th>Fecha de Ingreso</th>
+                <th>Fecha de Egreso</th>
               </tr>
             </thead>
             <tbody>
@@ -93,8 +77,17 @@ const AccordionInscripcion = ({ data, titulo, refetch = () => {} }) => {
 };
 
 const Inscripcion = ({ inscripcion, refetch }) => {
+  const { userData } = useUser();
+  console.log("user id", userData._id);
+  console.log("inscripcion lider id", inscripcion.proyecto.lider._id);
+
   const [aprobarInscripcion, { data, loading, error }] =
     useMutation(APROBAR_INSCRIPCION);
+
+  const [
+    rechazarInscripcion,
+    { loading: mutationLoading, error: mutationError },
+  ] = useMutation(RECHAZAR_INSCRIPCION);
 
   useEffect(() => {
     if (data) {
@@ -117,29 +110,60 @@ const Inscripcion = ({ inscripcion, refetch }) => {
     });
   };
 
-  return (
-    <>
-      <tr>
-        <td>{inscripcion.proyecto.nombre}</td>
-        <td>
-          {inscripcion.estudiante.nombre} {inscripcion.estudiante.apellido}
-        </td>
-        <td>{inscripcion.estado}</td>
-        <td>
-          {inscripcion.estado === "PENDIENTE" && (
-            <ButtonLoading
-              onClick={() => {
-                cambiarEstadoInscripcion();
-              }}
-              text="Aprobar"
-              loading={loading}
-              disabled={false}
-            />
-          )}
-        </td>
-        <td>{inscripcion.fechaIngreso}</td>
-      </tr>
-    </>
-  );
+  const noAprobarInscripcion = () => {
+    rechazarInscripcion({
+      variables: {
+        rechazarInscripcionId: inscripcion._id,
+      },
+    })
+      .then(() => {
+        toast.success("Inscripcion rechazada con exito");
+      })
+      .catch((mutationError) => {
+        toast.error("Error rechazando inscripcion");
+      });
+  };
+
+  if (userData._id === inscripcion.proyecto.lider._id) {
+    return (
+      <>
+        <tr>
+          <td>{inscripcion.proyecto.nombre}</td>
+          <td>
+            {inscripcion.estudiante.nombre} {inscripcion.estudiante.apellido}
+          </td>
+          <td>{inscripcion.estado}</td>
+          <td>
+            <div className="flex flex-col">
+              {inscripcion.estado === "PENDIENTE" && (
+                <ButtonLoading
+                  onClick={() => {
+                    cambiarEstadoInscripcion();
+                  }}
+                  text="Aceptar"
+                  loading={loading}
+                  disabled={false}
+                />
+              )}
+              {inscripcion.estado === "PENDIENTE" && (
+                <ButtonLoading
+                  onClick={() => {
+                    noAprobarInscripcion();
+                  }}
+                  text="Rechazar"
+                  loading={mutationLoading}
+                  disabled={false}
+                />
+              )}
+            </div>
+          </td>
+          <td>{inscripcion.fechaIngreso}</td>
+          <td>{inscripcion.fechaEgreso}</td>
+        </tr>
+      </>
+    );
+  }
+
+  return <></>;
 };
 export default IndexInscripciones;
