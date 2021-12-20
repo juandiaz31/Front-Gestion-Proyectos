@@ -58,13 +58,9 @@ const IndexProfile = () => {
         _id: userData._id,
         password: formData.password,
       },
-    })
-      .then(() => {
-        toast.success("Contraseña modificado con exito");
-      })
-      .catch(() => {
-        toast.error("Error editanto la contraseña");
-      });
+    }).catch(() => {
+      toast.error("Error editanto la contraseña");
+    });
   };
 
   if (queryLoading) return <div>Loading...</div>;
@@ -100,12 +96,7 @@ const IndexProfile = () => {
           type="email"
           required={true}
         />
-        <Input
-          label="Contraseña"
-          name="password"
-          type="password"
-          required={true}
-        />
+        <Input label="Contraseña" name="password" type="password" />
         <ButtonLoading
           text="Guardar"
           loading={loadingMutation}

@@ -10,6 +10,11 @@ const Enum_EstadoUsuario = {
   NO_AUTORIZADO: "No autorizado",
 };
 
+const Enum_EstadoUsuarioLider = {
+  PENDIENTE: "Pendiente",
+  AUTORIZADO: "Autorizado",
+};
+
 const Enum_EstadoProyecto = {
   ACTIVO: "Activo",
   INACTIVO: "Inactivo",
@@ -30,4 +35,5 @@ export {
   Enum_EstadoProyecto,
   Enum_TipoObjetivo,
   Enum_FaseProyecto,
+  Enum_EstadoUsuarioLider,
 };

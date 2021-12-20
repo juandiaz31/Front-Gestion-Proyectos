@@ -63,10 +63,20 @@ const GET_LIDERES = gql`
     }
   }
 `;
+
+const GET_ESTADO_USUARIO = gql`
+  query EstadoUsuario($_id: String!) {
+    EstadoUsuario(_id: $_id) {
+      estado
+    }
+  }
+`;
+
 export {
   GET_USUARIOS,
   GET_USUARIO,
   GET_ESTUDIANTES,
   GET_PERFIL_USUARIO,
   GET_LIDERES,
+  GET_ESTADO_USUARIO,
 };

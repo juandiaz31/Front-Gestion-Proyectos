@@ -2,36 +2,38 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "context/authContext";
 import PrivateComponent from "./PrivateComponent";
-// import { useUser } from "context/userContext";
 
 const SidebarLinks = () => {
-  // const { userData } = useUser();
-
   return (
-    <ul className="mt-12">
-      <SidebarRoute to="" title="Inicio" icon="fas fa-home" />
-      <SidebarRoute to="/perfil" title="Perfil" icon="fas fa-user" />
-      <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
-        <SidebarRoute to="/usuarios" title="Usuarios" icon="fas fa-users" />
-      </PrivateComponent>
-      <SidebarRoute to="/proyectos" title="Proyectos" icon="fas fa-file-alt" />
-      <PrivateComponent roleList={["LIDER"]}>
+    <>
+      <ul className="mt-12">
+        <SidebarRoute to="" title="Inicio" icon="fas fa-home" />
+        <SidebarRoute to="/perfil" title="Perfil" icon="fas fa-user" />
+
+        <PrivateComponent roleList={["ADMINISTRADOR", "LIDER"]}>
+          <SidebarRoute to="/usuarios" title="Usuarios" icon="fas fa-users" />
+        </PrivateComponent>
+
         <SidebarRoute
-          to="/inscripciones"
-          title="Inscripciones"
-          icon="fas fa-list-alt"
+          to="/proyectos"
+          title="Proyectos"
+          icon="fas fa-file-alt"
         />
-      </PrivateComponent>
-      <PrivateComponent roleList={["LIDER", "ESTUDIANTE"]}>
-        <SidebarRoute to="/avances" title="Avances" icon="fas fa-keyboard" />
-      </PrivateComponent>
-      {/* <SidebarRoute
-        to={`/editarPerfil/${userData._id}`}
-        title="Edicion perfil prueba"
-        icon="fas fa-keyboard"
-      /> */}
-      <Logout />
-    </ul>
+
+        <PrivateComponent roleList={["LIDER"]}>
+          <SidebarRoute
+            to="/inscripciones"
+            title="Inscripciones"
+            icon="fas fa-list-alt"
+          />
+        </PrivateComponent>
+        <PrivateComponent roleList={["LIDER", "ESTUDIANTE"]}>
+          <SidebarRoute to="/avances" title="Avances" icon="fas fa-keyboard" />
+        </PrivateComponent>
+
+        <Logout />
+      </ul>
+    </>
   );
 };
 

@@ -37,4 +37,13 @@ const EDITAR_PERFIL = gql`
   }
 `;
 
-export { EDITAR_USUARIO, EDITAR_PERFIL };
+const EDITAR_ESTADO_USUARIO = gql`
+  mutation EditarEstadoUsuario($_id: String!, $estado: Enum_EstadoUsuario!) {
+    editarEstadoUsuario(_id: $_id, estado: $estado) {
+      _id
+      estado
+    }
+  }
+`;
+
+export { EDITAR_USUARIO, EDITAR_PERFIL, EDITAR_ESTADO_USUARIO };
