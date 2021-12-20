@@ -32,7 +32,8 @@ import IndexAvances from "pages/avances/IndexAvances";
 // import PrivateRoute from 'components/PrivateRoute';
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  // uri: "http://localhost:4000/graphql",
+  uri: "https://backend-prueba-ciclo4.herokuapp.com/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
