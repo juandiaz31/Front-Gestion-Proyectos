@@ -14,34 +14,16 @@ import PrivateComponent from "components/PrivateComponent";
 import { CREAR_OBSERVACION } from "graphql/avances/mutations";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
-import { GET_PROYECTO } from "graphql/proyectos/queries";
 
 const CrearAvances = () => {
   const { projectid } = useParams();
   const [openDialog, setOpenDialog] = useState(false);
-
-  //   const { data, loading } = useQuery(GET_AVANCES, {
-  //     variables: {
-  //       project: projectid,
-  //     },
-  //   });
 
   const { data: queryData, loading } = useQuery(FILTRAR_AVANCES, {
     variables: {
       id: projectid,
     },
   });
-
-  const { data } = useQuery(GET_PROYECTO, {
-    variables: {
-      _id: projectid,
-    },
-  });
-
-  useEffect(() => {
-    // console.log("data get avances", data);
-    // console.log("data FILTRAR avances", queryData.filtrarAvance);
-  }, [queryData]);
 
   if (loading) return <div>Loading...</div>;
 

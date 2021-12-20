@@ -7,23 +7,28 @@ import { LOGIN } from "graphql/auth/mutations";
 import { useMutation } from "@apollo/client";
 import { useAuth } from "context/authContext";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
   const { setToken } = useAuth();
   const { form, formData, updateFormData } = useFormData();
 
-  const [
-    login,
-    { data: mutationData, loadin: mutationLoading, error: mutationError },
-  ] = useMutation(LOGIN);
+  const [login, { data: mutationData, loadin: mutationLoading, error }] =
+    useMutation(LOGIN);
 
   const submitForm = (e) => {
     e.preventDefault();
 
     login({
       variables: formData,
-    });
+    })
+      .then(() => {
+        toast.success("Login exitoso");
+      })
+      .catch(() => {
+        console.error("Error con la contraseña o usuario");
+      });
   };
 
   //Para saber si la mutacion login trae informacion y crear un token para dar acceso

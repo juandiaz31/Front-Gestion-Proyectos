@@ -9,6 +9,7 @@ import { EDITAR_PERFIL } from "graphql/usuarios/mutations";
 import { toast } from "react-toastify";
 
 import { GET_USUARIO } from "graphql/usuarios/queries";
+import { EDITAR_PASSWORD } from "graphql/auth/mutations";
 
 const IndexProfile = () => {
   const { form, formData, updateFormData } = useFormData();
@@ -29,11 +30,7 @@ const IndexProfile = () => {
     },
   });
 
-  useEffect(() => {
-    if (dataMutation) {
-      toast.success("Perfil modificado con exito");
-    }
-  }, [dataMutation]);
+  const [editarPassword, { data: dataPassword }] = useMutation(EDITAR_PASSWORD);
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -41,9 +38,33 @@ const IndexProfile = () => {
     editarPerfil({
       variables: {
         _id: userData._id,
-        campos: { ...formData },
+        campos: {
+          nombre: formData.nombre,
+          apellido: formData.apellido,
+          identificacion: formData.identificacion,
+          correo: formData.correo,
+        },
       },
-    });
+    })
+      .then(() => {
+        toast.success("Perfil modificado con exito");
+      })
+      .catch(() => {
+        toast.error("Error editanto el perfil");
+      });
+
+    editarPassword({
+      variables: {
+        _id: userData._id,
+        password: formData.password,
+      },
+    })
+      .then(() => {
+        toast.success("Contraseña modificado con exito");
+      })
+      .catch(() => {
+        toast.error("Error editanto la contraseña");
+      });
   };
 
   if (queryLoading) return <div>Loading...</div>;
@@ -79,12 +100,12 @@ const IndexProfile = () => {
           type="email"
           required={true}
         />
-        {/* <Input
+        <Input
           label="Contraseña"
           name="password"
           type="password"
           required={true}
-        /> */}
+        />
         <ButtonLoading
           text="Guardar"
           loading={loadingMutation}

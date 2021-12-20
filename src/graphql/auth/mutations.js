@@ -32,13 +32,21 @@ const LOGIN = gql`
   }
 `;
 
-const REFRESH_TOKEN = gql`
- mutation RefreshToken {
-  refreshToken {
-    token
-    error
+const EDITAR_PASSWORD = gql`
+  mutation EditarPassword($_id: String!, $password: String!) {
+    editarPassword(_id: $_id, password: $password) {
+      password
+    }
   }
-}
 `;
 
-export { REGISTRO, LOGIN, REFRESH_TOKEN };
+const REFRESH_TOKEN = gql`
+  mutation RefreshToken {
+    refreshToken {
+      token
+      error
+    }
+  }
+`;
+
+export { REGISTRO, LOGIN, REFRESH_TOKEN, EDITAR_PASSWORD };
