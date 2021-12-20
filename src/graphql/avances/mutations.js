@@ -26,4 +26,13 @@ const CREAR_OBSERVACION = gql`
     }
   }
 `;
-export { CREAR_AVANCE, CREAR_OBSERVACION };
+
+const EDITAR_AVANCE = gql`
+  mutation EditarAvance($_id: String!, $descripcion: String!) {
+    editarAvance(_id: $_id, descripcion: $descripcion) {
+      _id
+      descripcion
+    }
+  }
+`;
+export { CREAR_AVANCE, CREAR_OBSERVACION, EDITAR_AVANCE };

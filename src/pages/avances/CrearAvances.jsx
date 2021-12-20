@@ -14,7 +14,9 @@ import PrivateComponent from "components/PrivateComponent";
 import { CREAR_OBSERVACION } from "graphql/avances/mutations";
 import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
-const IndexAvances = () => {
+import { GET_PROYECTO } from "graphql/proyectos/queries";
+
+const CrearAvances = () => {
   const { projectid } = useParams();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -30,18 +32,25 @@ const IndexAvances = () => {
     },
   });
 
+  const { data } = useQuery(GET_PROYECTO, {
+    variables: {
+      _id: projectid,
+    },
+  });
+
   useEffect(() => {
     // console.log("data get avances", data);
-    console.log("data FILTRAR avances", queryData);
+    // console.log("data FILTRAR avances", queryData.filtrarAvance);
   }, [queryData]);
 
   if (loading) return <div>Loading...</div>;
 
   return (
     <div className="p-10 flex flex-col items-center">
-      <Link to="/avances">
+      <Link to="/proyectos">
         <i className="fas fa-arrow-left text-gray-600 cursor-pointer font-bold text-xl hover:text-gray-900" />
       </Link>
+
       <h1 className="text-gray-900 text-xl font-bold uppercase">
         Avances del proyecto {projectid}
       </h1>
@@ -79,6 +88,10 @@ const Avance = ({ avance }) => {
       </span>
       <span>
         <strong>Fecha: </strong> {avance.fecha}
+      </span>
+      <span>
+        <strong>Creado por: </strong> {avance.creadoPor.nombre}{" "}
+        {avance.creadoPor.apellido}
       </span>
       <div className="flex flex-col">
         <strong> Observaciones:</strong>{" "}
@@ -184,4 +197,4 @@ const CrearAvance = ({ proyecto, setOpenDialog }) => {
   );
 };
 
-export default IndexAvances;
+export default CrearAvances;

@@ -23,8 +23,6 @@ import ReactLoading from "react-loading";
 import { Enum_TipoObjetivo } from "utils/enum";
 import { EDITAR_OBJETIVO } from "graphql/proyectos/mutations";
 import { Enum_FaseProyecto } from "utils/enum";
-import { GET_PROYETO } from "graphql/proyectos/queries";
-import { GET_PROYECTO } from "graphql/proyectos/queries";
 
 const IndexProyectos = () => {
   const { data: queryData, loading } = useQuery(GET_PROYECTOS);
@@ -208,11 +206,6 @@ const FormEditProyecto = ({ _id }) => {
   console.log("id proyecto:", _id);
   const { form, formData, updateFormData } = useFormData();
   const [editarProyecto, { loading }] = useMutation(EDITAR_PROYECTO);
-  const { data: queryData } = useQuery(GET_PROYECTO, {
-    variables: {
-      _id: _id,
-    },
-  });
 
   const submitForm = (e) => {
     e.preventDefault();

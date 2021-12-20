@@ -7,8 +7,18 @@ const GET_AVANCES = gql`
       descripcion
       fecha
       observaciones
+      creadoPor {
+        _id
+        nombre
+        apellido
+      }
       proyecto {
         nombre
+        lider {
+          nombre
+          apellido
+          _id
+        }
       }
     }
   }
@@ -20,6 +30,10 @@ const FILTRAR_AVANCES = gql`
       _id
       descripcion
       fecha
+      creadoPor {
+        nombre
+        apellido
+      }
       observaciones
       proyecto {
         nombre

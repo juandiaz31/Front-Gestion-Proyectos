@@ -22,7 +22,9 @@ const SidebarLinks = () => {
           icon="fas fa-list-alt"
         />
       </PrivateComponent>
-      <SidebarRoute to="/avances" title="Avances" icon="fas fa-keyboard" />
+      <PrivateComponent roleList={["LIDER", "ESTUDIANTE"]}>
+        <SidebarRoute to="/avances" title="Avances" icon="fas fa-keyboard" />
+      </PrivateComponent>
       {/* <SidebarRoute
         to={`/editarPerfil/${userData._id}`}
         title="Edicion perfil prueba"

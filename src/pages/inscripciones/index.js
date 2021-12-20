@@ -15,7 +15,8 @@ import { RECHAZAR_INSCRIPCION } from "graphql/inscripciones/mutations";
 import { useUser } from "context/userContext";
 
 const IndexInscripciones = () => {
-  const { data, loading, error, refetch } = useQuery(GET_INSCRIPCIONES);
+  //falta captar el error del query
+  const { data, loading, refetch } = useQuery(GET_INSCRIPCIONES);
 
   if (loading) return <div>...Loading</div>;
 
